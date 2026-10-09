@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Break-even Navigator V1.2</title><style>
+:root{
+  --bg:#f4f6fb;--panel:#fff;--panel-border:#e6e9f2;--ink:#131a2c;--ink-soft:#5a6379;
+  --ink-faint:#8992a8;--brand:#3453f4;--brand-dark:#2338c9;--brand-soft:#eef1ff;
+  --good:#0f9d63;--good-soft:#e7f8f0;--bad:#e0483f;--bad-soft:#fdecea;--neutral:#97a0b5;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+.wrap{max-width:1120px;margin:0 auto;padding:28px 22px 48px}
+.top{display:flex;justify-content:space-between;gap:24px;align-items:flex-start;margin-bottom:22px}
+.brand-badge{display:inline-flex;gap:8px;align-items:center;background:var(--brand-soft);color:var(--brand-dark);font-weight:800;font-size:12px;padding:7px 10px;border-radius:999px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--brand)}
+h1{font-size:32px;line-height:1.1;margin:10px 0 7px}.v-tag{font-size:12px;margin-left:8px;vertical-align:middle;background:var(--brand);color:#fff;padding:4px 7px;border-radius:7px}
+.top p{margin:0;color:var(--ink-soft);max-width:690px;line-height:1.5}
+.pdf-btn,.reset-btn,.primary-btn{border:0;border-radius:10px;padding:11px 14px;font-weight:800;cursor:pointer}
+.pdf-btn,.primary-btn{background:linear-gradient(135deg,var(--brand),#6b3bf4);color:white}.reset-btn{background:#f1f2f6;color:var(--ink)}
+.section{margin:22px 0}.section-head{display:flex;justify-content:space-between;gap:14px;align-items:end;margin-bottom:10px}.section-head h2{font-size:19px;margin:0}.hint{font-size:12px;color:var(--ink-faint)}
+.card{background:var(--panel);border:1px solid var(--panel-border);border-radius:14px;padding:18px}.grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.field label{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:800;color:var(--ink-soft);margin-bottom:7px}
+input,select,textarea{width:100%;font:inherit;color:var(--ink);background:#fbfcfe;border:1.5px solid var(--panel-border);border-radius:9px;padding:11px 12px}
+.input-currency{display:flex;align-items:center;background:#fbfcfe;border:1.5px solid var(--panel-border);border-radius:9px}.input-currency span{padding-left:12px;font-weight:800;color:var(--ink-soft)}.input-currency input{border:0;background:transparent}
+.info-btn{border:0;background:var(--brand-soft);color:var(--brand-dark);border-radius:50%;width:22px;height:22px;cursor:pointer;font-weight:900}
+.help{display:none;margin-top:10px;padding:12px 14px;background:var(--brand-soft);border:1px solid #d9e0ff;border-radius:10px;color:var(--ink-soft);font-size:13px;line-height:1.5}.help.open{display:block}.help p{margin:6px 0}.help ul{margin:6px 0 6px 20px}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:18px 0}.kpi{background:#fff;border:1px solid var(--panel-border);border-radius:14px;padding:17px}.kpi.hero{background:linear-gradient(135deg,var(--brand),#6b3bf4);color:#fff;border:0}.kpi .label{font-size:12px;font-weight:800;color:var(--ink-soft)}.kpi.hero .label,.kpi.hero .sub{color:#fff}.kpi .value{font-size:27px;font-weight:900;margin:7px 0}.kpi .sub{font-size:12px;color:var(--ink-faint);line-height:1.35}
+.lever{padding:14px 0;border-bottom:1px solid var(--panel-border)}.lever:last-child{border-bottom:0}.lever-top{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-bottom:9px}.lever-title{font-weight:850}.range-hint{display:block;font-size:11px;color:var(--ink-faint);margin-top:3px}.lever-value{display:flex;align-items:center;gap:5px;min-width:105px}.lever-value input{padding:7px 8px;text-align:right}.lever-value .unit{font-size:12px;color:var(--ink-soft);font-weight:800}
+input[type=range]{width:100%;accent-color:var(--brand)}
+.compare{width:100%;border-collapse:collapse}.compare th,.compare td{padding:10px 9px;border-bottom:1px solid var(--panel-border);text-align:right}.compare th:first-child,.compare td:first-child{text-align:left}.compare th{font-size:11px;text-transform:uppercase;color:var(--ink-soft)}
+.headroom{margin-top:14px}.track{height:18px;background:#e3e6f0;border-radius:999px;overflow:hidden;position:relative}.fill{height:100%;background:var(--good);width:0}.marker{position:absolute;top:-5px;width:3px;height:28px;background:var(--brand-dark);left:0}.scale{display:flex;justify-content:space-between;font-size:11px;color:var(--ink-faint);margin-top:6px}
+.callout{background:var(--brand-soft);border:1px solid #d9e0ff;border-radius:12px;padding:14px;line-height:1.5;color:var(--ink-soft)}
+textarea{min-height:95px;resize:vertical}
+footer{margin-top:28px;padding-top:16px;border-top:1px solid var(--panel-border);font-size:11px;color:var(--ink-faint);line-height:1.5}
+#printReport{display:none}
+@media(max-width:760px){.top{display:block}.pdf-btn{margin-top:14px}.grid-2,.grid-3,.kpis{grid-template-columns:1fr 1fr}.kpis{grid-template-columns:1fr 1fr}}
+@media(max-width:500px){.grid-2,.grid-3,.kpis{grid-template-columns:1fr}.wrap{padding:18px 12px}.compare{font-size:12px}}
+@media print{
+ body *{visibility:hidden}#printReport,#printReport *{visibility:visible}#printReport{display:block;position:absolute;left:0;top:0;width:100%;padding:28px;color:#131a2c;background:#fff}
+ .rpt-head{border-bottom:3px solid #1c2a5e;padding-bottom:12px;margin-bottom:16px}.rpt-head h1{font-size:24px;margin:0}.rpt-sub{font-size:11px;color:#5a6379;margin-top:4px}
+ .rpt-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}.rpt-box{border:1px solid #d7dce8;border-radius:8px;padding:9px}.rpt-box b{display:block;font-size:17px;margin-top:4px}.rpt-h2{color:#1c2a5e;font-size:15px;border-bottom:1px solid #d7dce8;padding-bottom:4px;margin:18px 0 8px}
+ .rpt-table{width:100%;border-collapse:collapse}.rpt-table th,.rpt-table td{font-size:10px;padding:6px;border:1px solid #d7dce8;text-align:right}.rpt-table th:first-child,.rpt-table td:first-child{text-align:left}
+ .rpt-notes{white-space:pre-wrap;border:1px solid #d7dce8;border-radius:8px;padding:10px;min-height:70px;font-size:11px}.rpt-foot{margin-top:18px;border-top:1px solid #d7dce8;padding-top:8px;font-size:9px;color:#5a6379}
+}
+</style></head>
+<body>
+<div class="wrap">
+<header class="top">
+ <div>
+  <span class="brand-badge"><span class="dot"></span>Scenario Planner</span>
+  <h1>Break-even Navigator<span class="v-tag">V1.2</span></h1>
+  <p>Understand the sales level needed to cover costs, see the business's sales headroom, and explore how price, volume and costs could change the position.</p>
+ </div>
+ <button class="pdf-btn" id="pdfBtn" type="button">Download Client Summary (PDF)</button>
+</header>
+
+<section class="section">
+ <div class="section-head"><h2>Business information</h2><span class="hint">Works independently, or can receive baseline figures from Profitability Navigator</span></div>
+ <div class="card grid-3">
+  <div class="field"><label>Company name</label><input id="company" type="text"></div>
+  <div class="field"><label>Scenario name</label><input id="scenario" type="text"></div>
+  <div class="field"><label>Currency</label><select id="currency"><option value="GBP">£ GBP</option><option value="USD">$ USD</option><option value="EUR">€ EUR</option></select></div>
+  <div class="field"><label>Prepared for</label><input id="preparedFor" type="text"></div>
+  <div class="field"><label>Prepared by</label><input id="preparedBy" type="text"></div>
+  <div class="field"><label>Date</label><input id="date" type="text"></div>
+ </div>
+</section>
+
+<section class="section">
+ <div class="section-head"><h2>Current financial position</h2><span class="hint">Annual figures</span></div>
+ <div class="card grid-3">
+  <div class="field"><label>Sales / turnover</label><div class="input-currency"><span class="sym">£</span><input id="sales" inputmode="decimal" value="0"></div></div>
+  <div class="field">
+   <label>Cost of Goods Sold / direct costs <button class="info-btn" data-help="cogsHelp" type="button">ⓘ</button></label>
+   <div class="input-currency"><span class="sym">£</span><input id="cogs" inputmode="decimal" value="0"></div>
+   <div class="help" id="cogsHelp"><p><strong>What should I include?</strong></p><p>Direct costs associated with producing or delivering what the business sells.</p><ul><li>Raw materials, components or stock for resale.</li><li>Packaging and production consumables.</li><li>Job-specific subcontractors.</li><li>Direct production or delivery labour where treated as a direct cost.</li></ul><p><strong>Simple test:</strong> Is this cost directly attributable to producing or delivering what you sell?</p><p>Use the same classification as the business's accounts or management information wherever possible. If unsure, check with the accountant.</p></div>
+  </div>
+  <div class="field">
+   <label>Overheads / fixed costs <button class="info-btn" data-help="ohHelp" type="button">ⓘ</button></label>
+   <div class="input-currency"><span class="sym">£</span><input id="overheads" inputmode="decimal" value="0"></div>
+   <div class="help" id="ohHelp"><p><strong>What should I include?</strong></p><p>General costs of running the business that are not directly attributable to an individual product, job or sale.</p><ul><li>Administration and management salaries.</li><li>Premises, insurance and professional fees.</li><li>Software, IT, telephone and general marketing.</li></ul><p><strong>Simple test:</strong> Would the business still have most of this cost if sales temporarily fell?</p><p>Use the same classification as the business's accounts or management information wherever possible. If unsure, check with the accountant.</p></div>
+  </div>
+ </div>
+</section>
+
+<section class="kpis">
+ <div class="kpi"><div class="label">Current operating profit</div><div class="value" id="currentProfit">£0</div><div class="sub">Sales less direct costs and overheads</div></div>
+ <div class="kpi"><div class="label">Contribution margin</div><div class="value" id="margin">0%</div><div class="sub">Contribution available from each £1 of sales</div></div>
+ <div class="kpi hero"><div class="label">Break-even sales</div><div class="value" id="breakEven">£0</div><div class="sub">Indicative sales needed to cover costs</div></div>
+ <div class="kpi"><div class="label">Sales headroom</div><div class="value" id="headroom">£0</div><div class="sub" id="headroomSub">0% above break-even</div></div>
+</section>
+
+<section class="section">
+ <div class="section-head"><h2>Sales headroom</h2><span class="hint">How far current sales sit above or below break-even</span></div>
+ <div class="card">
+  <div class="track"><div class="fill" id="headroomFill"></div><div class="marker" id="beMarker"></div></div>
+  <div class="scale"><span>£0</span><span id="scaleBreak">Break-even £0</span><span id="scaleSales">Sales £0</span></div>
+ </div>
+</section>
+
+<section class="section">
+ <div class="section-head"><h2>Profit Goal &amp; Sales Required</h2><span class="hint">Where does the owner want the business to get to?</span></div>
+ <div class="card grid-2">
+  <div class="field"><label>Profit goal — annual operating profit</label><div class="input-currency"><span class="sym">£</span><input id="targetProfit" inputmode="decimal" value="0"></div></div>
+  <div class="callout"><strong>Sales required at the current cost structure:</strong> <span id="targetSales">£0</span><br><span id="targetGap">Enter a target profit to explore the sales requirement.</span></div>
+ </div>
+</section>
+
+<section class="section">
+ <div class="section-head"><h2>Scenario controls</h2><button class="reset-btn" id="reset" type="button">↺ Reset controls</button></div>
+ <div class="grid-2">
+  <div class="card">
+   <div class="lever"><div class="lever-top"><div><span class="lever-title">Selling price</span><span class="range-hint">Suggested range: −10% to +15%</span></div><div class="lever-value"><input id="priceNum" type="number" value="0" step=".5"><span class="unit">%</span></div></div><input id="priceRange" type="range" min="-10" max="15" step=".5" value="0"></div>
+   <div class="lever"><div class="lever-top"><div><span class="lever-title">Sales volume</span><span class="range-hint">Suggested range: −20% to +30%</span></div><div class="lever-value"><input id="volumeNum" type="number" value="0" step="1"><span class="unit">%</span></div></div><input id="volumeRange" type="range" min="-20" max="30" step="1" value="0"></div>
+  </div>
+  <div class="card">
+   <div class="lever"><div class="lever-top"><div><span class="lever-title">COGS / direct cost rate</span><span class="range-hint">Change in direct cost per unit of activity</span></div><div class="lever-value"><input id="cogsNum" type="number" value="0" step="1"><span class="unit">%</span></div></div><input id="cogsRange" type="range" min="-15" max="15" step="1" value="0"></div>
+   <div class="lever"><div class="lever-top"><div><span class="lever-title">Overheads</span><span class="range-hint">Suggested range: −15% to +15%</span></div><div class="lever-value"><input id="ohNum" type="number" value="0" step="1"><span class="unit">%</span></div></div><input id="ohRange" type="range" min="-15" max="15" step="1" value="0"></div>
+  </div>
+ </div>
+</section>
+
+<section class="section">
+ <div class="section-head"><h2>Scenario impact</h2><span class="hint">See immediately what changes when you move a control</span></div>
+ <div class="kpis">
+  <div class="kpi"><div class="label">Sales</div><div class="value" id="scenarioSales">£0</div><div class="sub" id="scenarioSalesFrom">From £0</div></div>
+  <div class="kpi"><div class="label">Direct costs / COGS</div><div class="value" id="scenarioCogs">£0</div><div class="sub" id="scenarioCogsFrom">From £0</div></div>
+  <div class="kpi"><div class="label">Overheads</div><div class="value" id="scenarioOh">£0</div><div class="sub" id="scenarioOhFrom">From £0</div></div>
+  <div class="kpi hero"><div class="label">Operating profit</div><div class="value" id="scenarioProfit">£0</div><div class="sub" id="scenarioProfitFrom">From £0</div></div>
+ </div>
+ <div class="callout" id="scenarioExplanation"><strong>How the model works:</strong> Sales volume changes sales and direct costs together. Selling price changes sales without automatically changing direct cost. The COGS control changes direct cost per unit of activity. Overheads change only when you move the Overheads control.</div>
+</section>
+
+<section class="section">
+ <div class="section-head"><h2>Before and after</h2><span class="hint">Scenario figures update instantly</span></div>
+ <div class="card"><table class="compare"><thead><tr><th>Metric</th><th>Current</th><th>Scenario</th><th>Change</th></tr></thead><tbody id="compareBody"></tbody></table></div>
+</section>
+
+
+
+<section class="section">
+ <div class="section-head"><h2>Adviser notes / actions</h2></div>
+ <div class="card"><textarea id="notes" placeholder="Record the key discussion, assumptions or actions arising from the scenario..."></textarea></div>
+</section>
+
+<footer>Break-even Navigator is an illustrative scenario-planning tool. Results depend on the figures entered and simplified assumptions, including the treatment of direct costs and overheads. It is not a forecast and does not constitute accounting, tax, investment or financial advice. Actual business outcomes may differ.</footer>
+</div>
+<div id="printReport"></div>
+<script>
+(function(){
+"use strict";
+var $=function(id){return document.getElementById(id)};
+function n(v){var x=parseFloat(String(v||"").replace(/[^0-9.\-]/g,""));return isFinite(x)?x:0}
+function sym(){return {GBP:"£",USD:"$",EUR:"€"}[$("currency").value]||"£"}
+function money(v){var a=Math.round(Math.abs(v));return (v<0?"-":"")+sym()+a.toLocaleString("en-GB")}
+function pct(v){return (isFinite(v)?v:0).toFixed(1).replace(".0","")+"%"}
+function calc(sales,cogs,oh,price,vol,cogschg,ohchg){
+ var baseRate=sales>0?cogs/sales:0;
+ var unitsFactor=1+vol/100, priceFactor=1+price/100;
+ var scSales=sales*unitsFactor*priceFactor;
+ var scCogs=cogs*unitsFactor*(1+cogschg/100);
+ var scOh=oh*(1+ohchg/100);
+ var contribution=scSales-scCogs;
+ var margin=scSales>0?contribution/scSales:0;
+ var profit=contribution-scOh;
+ var be=margin>0?scOh/margin:0;
+ var head=scSales-be;
+ var headPct=scSales>0?head/scSales:0;
+ return {sales:scSales,cogs:scCogs,oh:scOh,contribution:contribution,margin:margin,profit:profit,be:be,head:head,headPct:headPct};
+}
+function values(){
+ var sales=n($("sales").value),cogs=n($("cogs").value),oh=n($("overheads").value);
+ return {
+  base:calc(sales,cogs,oh,0,0,0,0),
+  sc:calc(sales,cogs,oh,n($("priceNum").value),n($("volumeNum").value),n($("cogsNum").value),n($("ohNum").value))
+ };
+}
+function render(){
+ document.querySelectorAll(".sym").forEach(function(x){x.textContent=sym()});
+ var r=values(),b=r.base,s=r.sc;
+ $("currentProfit").textContent=money(b.profit); $("margin").textContent=pct(b.margin*100); $("breakEven").textContent=money(b.be); $("headroom").textContent=money(b.head);
+ $("headroomSub").textContent=(b.sales<=0?"Enter current figures":(b.head>=0?pct(b.headPct*100)+" above break-even":pct(Math.abs(b.headPct*100))+" below break-even"));
+
+ // Prominent scenario impact: make the cost behaviour visible, not hidden in the table.
+ $("scenarioSales").textContent=money(s.sales);
+ $("scenarioSalesFrom").textContent="From "+money(b.sales)+(s.sales!==b.sales?" · "+(s.sales>b.sales?"+":"")+money(s.sales-b.sales):" · no change");
+ $("scenarioCogs").textContent=money(s.cogs);
+ $("scenarioCogsFrom").textContent="From "+money(b.cogs)+(s.cogs!==b.cogs?" · "+(s.cogs>b.cogs?"+":"")+money(s.cogs-b.cogs):" · no change");
+ $("scenarioOh").textContent=money(s.oh);
+ $("scenarioOhFrom").textContent="From "+money(b.oh)+(s.oh!==b.oh?" · "+(s.oh>b.oh?"+":"")+money(s.oh-b.oh):" · no change");
+ $("scenarioProfit").textContent=money(s.profit);
+ $("scenarioProfitFrom").textContent="From "+money(b.profit)+(s.profit!==b.profit?" · "+(s.profit>b.profit?"+":"")+money(s.profit-b.profit):" · no change");
+
+ var vol=n($("volumeNum").value), price=n($("priceNum").value), cc=n($("cogsNum").value), oc=n($("ohNum").value);
+ var parts=[];
+ if(vol!==0) parts.push("Volume "+(vol>0?"increases":"reduces")+" both sales activity and direct costs by "+pct(Math.abs(vol))+".");
+ if(price!==0) parts.push("Price changes sales value by "+pct(Math.abs(price))+" without automatically changing direct cost.");
+ if(cc!==0) parts.push("The direct-cost control changes cost per unit/activity by "+pct(Math.abs(cc))+".");
+ if(oc!==0) parts.push("Overheads change by "+pct(Math.abs(oc))+".");
+ $("scenarioExplanation").innerHTML="<strong>What is happening:</strong> "+(parts.length?parts.join(" "):"Move a scenario control to see how sales, direct costs, overheads and profit respond.");
+
+ var max=Math.max(b.sales,b.be,1),bePos=Math.min(100,b.be/max*100),salesPos=Math.min(100,b.sales/max*100);
+ $("beMarker").style.left=bePos+"%"; $("headroomFill").style.width=salesPos+"%"; $("scaleBreak").textContent="Break-even "+money(b.be); $("scaleSales").textContent="Sales "+money(b.sales);
+ var rows=[
+  ["Sales",b.sales,s.sales],["Contribution margin",b.margin*100,s.margin*100],["Break-even sales",b.be,s.be],["Sales headroom",b.head,s.head],["Operating profit",b.profit,s.profit]
+ ];
+ $("compareBody").innerHTML=rows.map(function(x,i){var d=x[2]-x[1],f=i===1?pct:money;return "<tr><td>"+x[0]+"</td><td>"+f(x[1])+"</td><td>"+f(x[2])+"</td><td>"+(d>0?"+":"")+f(d)+"</td></tr>"}).join("");
+ var target=n($("targetProfit").value);
+ if(target>0 && s.margin>0){var ts=(s.oh+target)/s.margin,gap=ts-s.sales;$("targetSales").textContent=money(ts);$("targetGap").textContent=gap>0?money(gap)+" additional sales required ("+pct(gap/Math.max(s.sales,1)*100)+").":"Current scenario sales exceed the target requirement by "+money(Math.abs(gap))+"."}
+ else{$("targetSales").textContent=money(0);$("targetGap").textContent=target>0?"A positive contribution margin is required to calculate target sales.":"Enter a target profit to explore the sales requirement."}
+}
+[["priceRange","priceNum"],["volumeRange","volumeNum"],["cogsRange","cogsNum"],["ohRange","ohNum"]].forEach(function(pair){
+ $(pair[0]).addEventListener("input",function(){$(pair[1]).value=this.value;render()});
+ $(pair[1]).addEventListener("input",function(){$(pair[0]).value=this.value;render()});
+});
+["sales","cogs","overheads","targetProfit","currency"].forEach(function(id){$(id).addEventListener("input",render);$(id).addEventListener("change",render)});
+document.querySelectorAll(".info-btn").forEach(function(btn){btn.addEventListener("click",function(){$(this.dataset.help).classList.toggle("open")})});
+$("reset").addEventListener("click",function(){["priceNum","volumeNum","cogsNum","ohNum","priceRange","volumeRange","cogsRange","ohRange"].forEach(function(id){$(id).value=0});render()});
+function importQuery(){
+ var q=new URLSearchParams(location.search), map={company:"company",revenue:"sales",sales:"sales",cogs:"cogs",overheads:"overheads",currency:"currency",preparedFor:"preparedFor",preparedBy:"preparedBy"};
+ Object.keys(map).forEach(function(k){if(q.has(k))$(map[k]).value=q.get(k)});
+}
+$("pdfBtn").addEventListener("click",function(){
+ var r=values(),b=r.base,s=r.sc,target=n($("targetProfit").value),ts=(target>0&&s.margin>0)?(s.oh+target)/s.margin:0;
+ var esc=function(v){return String(v||"").replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})};
+ $("printReport").innerHTML='<div class="rpt-head"><h1>'+esc($("company").value||"Client")+'</h1><div class="rpt-sub">Break-even Navigator V1.2 — Client Summary · '+esc($("scenario").value||"Scenario")+'</div></div>'+
+ '<div class="rpt-grid"><div class="rpt-box">Break-even sales<b>'+money(b.be)+'</b></div><div class="rpt-box">Sales headroom<b>'+money(b.head)+'</b></div><div class="rpt-box">Current profit<b>'+money(b.profit)+'</b></div><div class="rpt-box">Contribution margin<b>'+pct(b.margin*100)+'</b></div></div>'+
+ '<div class="rpt-h2">Current position and scenario</div><table class="rpt-table"><tr><th>Metric</th><th>Current</th><th>Scenario</th></tr>'+
+ '<tr><td>Sales</td><td>'+money(b.sales)+'</td><td>'+money(s.sales)+'</td></tr><tr><td>Direct costs / COGS</td><td>'+money(b.cogs)+'</td><td>'+money(s.cogs)+'</td></tr><tr><td>Overheads</td><td>'+money(b.oh)+'</td><td>'+money(s.oh)+'</td></tr><tr><td>Break-even sales</td><td>'+money(b.be)+'</td><td>'+money(s.be)+'</td></tr><tr><td>Sales headroom</td><td>'+money(b.head)+'</td><td>'+money(s.head)+'</td></tr><tr><td>Operating profit</td><td>'+money(b.profit)+'</td><td>'+money(s.profit)+'</td></tr></table>'+
+ '<div class="rpt-h2">Profit goal &amp; sales required</div><div class="rpt-box">Profit goal — annual operating profit <b>'+money(target)+'</b>Indicative sales required: '+money(ts)+'</div>'+
+ '<div class="rpt-h2">Adviser notes / actions</div><div class="rpt-notes">'+esc($("notes").value)+'</div>'+
+ '<div class="rpt-foot">Break-even Navigator is an illustrative scenario-planning tool based on simplified assumptions and the figures entered. It is not a forecast or accounting, tax, investment or financial advice. Prepared for '+esc($("preparedFor").value||"the client")+' by '+esc($("preparedBy").value||"the adviser")+'. '+esc($("date").value)+'</div>';
+ window.print();
+});
+importQuery();render();
+})();
+</script></body></html>
